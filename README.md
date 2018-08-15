@@ -1,11 +1,15 @@
 # MessagePackEditor
 
+## is 何
+
+MessagePack for C#向けの型をUnityのアセットとして保存、編集するためのエディタ拡張です。
+
 ## 使い方
 
 ### 前提
 
-このライブラリはMessagePack-CSharpに依存しています。
-MessagePack-CSharpが導入されていない以下のような`H
+このライブラリはMessagePack for C#に依存しています。
+MessagePack-CSharpが導入されていない環境では使用できません。
 
 ### Getting Started
 
