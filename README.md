@@ -11,7 +11,7 @@ MessagePack for C#向けの型をUnityのアセットとして保存、編集す
 このライブラリはMessagePack for C#に依存しています。
 MessagePack-CSharpが導入されていない環境では使用できません。
 
-### Getting Started
+### 使ってみる
 
 保存したり編集したいMessagePackの型が`Hoge`だったとします。
 
