@@ -1,0 +1,14 @@
+/Assets/*
+/Library
+/Packages
+/ProjectSettings
+/Temp
+/Tools
+/.vs
+/obj
+
+!/Assets/MessagePackEditor
+
+*.sln
+# *.meta
+*.csproj

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEditor;
+using MessagePack;
 
 namespace MessagePackEditor
 {
@@ -15,28 +16,14 @@ namespace MessagePackEditor
 
     public class DefaultMessagePackPropertyDrawer : IMessagePackPropertyDrawer
     {
-        private static Dictionary<Type, PropertyInfo[]> _properties = new Dictionary<Type, PropertyInfo[]>();
-        private static PropertyInfo[] GetProperties(Type type)
-        {
-            PropertyInfo[] results = null;
-            //キャッシュにあればそれを返却
-            if (_properties.TryGetValue(type, out results))
-            {
-                return results;
-            }
-
-            //キャッシュにない →作ってキャッシュにつめる
-            results = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(prop => prop.GetCustomAttribute(typeof(MessagePack.KeyAttribute)) != null)
-                .ToArray();
-
-            _properties.Add(type, results);
-
-            return results;
-        }
-
         private readonly bool _useFoldout = true;
         private bool _foldoutOpen = false;
+
+        private bool _unionChecked = false;
+        private UnionAttribute[] _unions = null;
+        private int _unionSelectedIndex = -1;
+        private GUIContent[] _unionPopup = null;
+        private static readonly GUIContent UnionLabel = new GUIContent("Union");
 
         private ArrayMessagePackPropertyDrawer _arrayDrawer = null;
         private Dictionary<string, DefaultMessagePackPropertyDrawer> _childDrawers = new Dictionary<string, DefaultMessagePackPropertyDrawer>();
@@ -67,22 +54,11 @@ namespace MessagePackEditor
                 return _arrayDrawer.DrawField(label, getter, setter, type);
             }
 
-            //class or struct
-            // [MessagePackObject]属性をチェック
-            var attrs = type.GetCustomAttributes(typeof(MessagePack.MessagePackObjectAttribute), true);
-            if (attrs == null || attrs.Length == 0)
+            //[MessagePackObject]でもないし[Union]でもないなら処理不可
+            if (!MessagePackTypeCache.Instance.IsCached(type))
                 return false;
-
+            
             bool edit = false;
-
-            //デフォルトで作成
-            var obj = getter();
-            if (obj == null)
-            {
-                obj = Activator.CreateInstance(type);
-                setter(obj);
-                edit = true;
-            }
 
             //折り畳み処理
             if (_useFoldout)
@@ -92,7 +68,56 @@ namespace MessagePackEditor
                     return false;
             }
 
-            var props = GetProperties(type);
+            var concreteType = type;
+
+            //すでにinstanceがあるか、取得しておく
+            var obj = getter();
+
+            //Union対象かを一度だけチェックする
+            if (!_unionChecked)
+            {
+                _unions = MessagePackTypeCache.Instance.GetUnions(type);
+                if (_unions != null && _unions.Length > 0)
+                {
+                    _unionPopup = _unions.Select(x => new GUIContent(x.SubType.FullName)).ToArray();
+                }
+                _unionChecked = true;
+            }
+            
+            if(_unionPopup != null)
+            {
+                //初回だけ、objに合わせたindexに調整する
+                if(_unionSelectedIndex == -1)
+                {
+                    if (obj != null)
+                    {
+                        _unionSelectedIndex = Array.FindIndex(_unions, union => union.SubType == obj.GetType());
+                    }
+
+                    if (_unionSelectedIndex == -1)
+                        _unionSelectedIndex = 0;
+                }
+
+                var newIndex = EditorGUILayout.Popup(UnionLabel, _unionSelectedIndex, _unionPopup);
+                if(newIndex != _unionSelectedIndex)
+                {
+                    _unionSelectedIndex = newIndex;
+                    //Unionの選択が変わったら再生成するためにobjをnullにしておく
+                    obj = null;
+                    edit = true;
+                }
+                concreteType = _unions[_unionSelectedIndex].SubType;
+            }
+
+            //デフォルトで作成
+            if (obj == null)
+            {
+                obj = Activator.CreateInstance(concreteType);
+                setter(obj);
+                edit = true;
+            }
+
+            var props = MessagePackTypeCache.Instance.GetProperties(concreteType);
             foreach (var prop in props)
             {
                 DefaultMessagePackPropertyDrawer drawer = null;

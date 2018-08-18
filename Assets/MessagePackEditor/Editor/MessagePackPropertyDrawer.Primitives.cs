@@ -20,6 +20,8 @@ namespace MessagePackEditor
             Register(UInt16MessagePackPropertyDrawer.Default);
             Register(UInt32MessagePackPropertyDrawer.Default);
             Register(UInt64MessagePackPropertyDrawer.Default);
+            Register(SingleMessagePackPropertyDrawer.Default);
+            Register(DoubleMessagePackPropertyDrawer.Default);
             Register(StringMessagePackPropertyDrawer.Default);
             Register(EnumMessagePackPropertyDrawer.Default);
         }
@@ -261,6 +263,58 @@ namespace MessagePackEditor
             if (valueStr != newStr)
             {
                 if (UInt64.TryParse(newStr, out value))
+                {
+                    setter(value);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class SingleMessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly SingleMessagePackPropertyDrawer Default = new SingleMessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(System.Single); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (Single)getter();
+            var valueStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valueStr);
+            if (valueStr != newStr)
+            {
+                if (Single.TryParse(newStr, out value))
+                {
+                    setter(value);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class DoubleMessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly DoubleMessagePackPropertyDrawer Default = new DoubleMessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(System.Double); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (Double)getter();
+            var valueStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valueStr);
+            if (valueStr != newStr)
+            {
+                if (Double.TryParse(newStr, out value))
                 {
                     setter(value);
                     return true;
