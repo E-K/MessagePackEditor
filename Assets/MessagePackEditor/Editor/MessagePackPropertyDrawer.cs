@@ -127,7 +127,7 @@ namespace MessagePackEditor
                     _childDrawers.Add(prop.Name, drawer);
                 }
 
-                edit |= drawer.DrawField(prop.Name, () => prop.GetValue(obj), (newValue) => prop.SetValue(obj, newValue), prop.PropertyType);
+                edit |= drawer.DrawField(prop.Name, () => prop.GetValue(obj, null), (newValue) => prop.SetValue(obj, newValue, null), prop.PropertyType);
             }
 
             return edit;

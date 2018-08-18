@@ -25,14 +25,15 @@ namespace MessagePackEditor
                 .Where(asm => !asm.FullName.StartsWith("Unity"))
                 .Where(asm => !asm.FullName.StartsWith("SyntaxTree"))
                 .Where(asm => !asm.FullName.StartsWith("Mono.Security,"))
-                .Where(asm => !asm.IsDynamic)
+                //.Where(asm => !asm.IsDynamic)
                 .SelectMany(asm => asm.GetExportedTypes())
                 .ToArray();
 
             foreach (var t in types)
             {
                 //cache union
-                var unions = t.GetCustomAttributes<UnionAttribute>()
+                var unions = t.GetCustomAttributes(typeof(UnionAttribute), true)
+                    .Cast<UnionAttribute>()
                     .OrderBy(attr => attr.Key)
                     .ToArray();
 
@@ -46,12 +47,17 @@ namespace MessagePackEditor
                 if (t.IsInterface || t.IsAbstract)
                     continue;
 
-                if (t.GetCustomAttribute<MessagePackObjectAttribute>() == null)
+                var mpo = t.GetCustomAttributes(typeof(MessagePackObjectAttribute), true);
+                if (mpo == null || mpo.Length == 0)
                     continue;
 
                 var props = t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .Where(prop => prop.CanRead && prop.CanWrite) //requires get; set;
-                    .Where(prop => prop.GetCustomAttribute<KeyAttribute>() != null)
+                    .Where(prop =>
+                    {
+                        var attr = prop.GetCustomAttributes(typeof(KeyAttribute), true);
+                        return attr != null && attr.Length > 0;
+                    })
                     .ToArray();
 
                 Instance.PropertyCache.Add(t, props);
@@ -59,8 +65,8 @@ namespace MessagePackEditor
         }
         #endregion
 
-        private Dictionary<Type, UnionAttribute[]> UnionCache { get; } = new Dictionary<Type, UnionAttribute[]>();
-        private Dictionary<Type, PropertyInfo[]> PropertyCache { get; } = new Dictionary<Type, PropertyInfo[]>();
+        private Dictionary<Type, UnionAttribute[]> UnionCache { get; set; }
+        private Dictionary<Type, PropertyInfo[]> PropertyCache { get; set; }
 
         public UnionAttribute[] GetUnions(Type type)
         {
@@ -71,6 +77,8 @@ namespace MessagePackEditor
 
         private MessagePackTypeCache()
         {
+            UnionCache = new Dictionary<Type, UnionAttribute[]>();
+            PropertyCache = new Dictionary<Type, PropertyInfo[]>();
         }
 
         public bool IsCached(Type t)
