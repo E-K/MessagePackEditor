@@ -16,7 +16,7 @@ namespace MessagePackEditor
             protected set { _bytes = value; }
         }
 
-        [Space(50)]
+        [Space(10)]
         [SerializeField]
         private string _filepath = null;
         public string Filepath
