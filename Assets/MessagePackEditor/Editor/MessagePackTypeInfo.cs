@@ -59,8 +59,8 @@ namespace MessagePackEditor
         }
         #endregion
 
-        public Dictionary<Type, UnionAttribute[]> UnionCache { get; } = new Dictionary<Type, UnionAttribute[]>();
-        public Dictionary<Type, PropertyInfo[]> PropertyCache { get; } = new Dictionary<Type, PropertyInfo[]>();
+        private Dictionary<Type, UnionAttribute[]> UnionCache { get; } = new Dictionary<Type, UnionAttribute[]>();
+        private Dictionary<Type, PropertyInfo[]> PropertyCache { get; } = new Dictionary<Type, PropertyInfo[]>();
 
         public UnionAttribute[] GetUnions(Type type)
         {

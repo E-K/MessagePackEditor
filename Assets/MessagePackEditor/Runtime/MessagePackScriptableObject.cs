@@ -8,13 +8,25 @@ namespace MessagePackEditor
         public abstract object SerializeObject { get; set; }
         public abstract Type SerializeType { get; }
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private byte[] _bytes = null;
         public byte[] Bytes
         {
             get { return _bytes; }
             protected set { _bytes = value; }
         }
+
+        [Space(50)]
+        [SerializeField]
+        private string _filepath = null;
+        public string Filepath
+        {
+            get { return _filepath;  }
+            set { _filepath = value; }
+        }
+
+        public abstract void Load();
+        public abstract void Save();
     }
 
     public abstract class MessagePackScriptableObject<T> : MessagePackScriptableObject, ISerializationCallbackReceiver
@@ -40,6 +52,18 @@ namespace MessagePackEditor
         public void OnBeforeSerialize()
         {
             Bytes = MessagePack.MessagePackSerializer.Serialize<T>(Value);
+        }
+
+        public override void Load()
+        {
+            Bytes = System.IO.File.ReadAllBytes(Filepath);
+            OnAfterDeserialize();
+        }
+
+        public override void Save()
+        {
+            OnBeforeSerialize();
+            System.IO.File.WriteAllBytes(Filepath, Bytes);
         }
     }
 }
