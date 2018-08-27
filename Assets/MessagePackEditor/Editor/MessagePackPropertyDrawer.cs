@@ -104,6 +104,7 @@ namespace MessagePackEditor
                     _unionSelectedIndex = newIndex;
                     //Unionの選択が変わったら再生成するためにobjをnullにしておく
                     obj = null;
+                    setter(null);
                     edit = true;
                 }
                 concreteType = _unions[_unionSelectedIndex].SubType;
@@ -112,10 +113,25 @@ namespace MessagePackEditor
             //デフォルトで作成
             if (obj == null)
             {
-                obj = Activator.CreateInstance(concreteType);
-                setter(obj);
-                edit = true;
+                if(_useFoldout && GUILayout.Button("new", GUILayout.Width(100f)))
+                {
+                    obj = Activator.CreateInstance(concreteType);
+                    setter(obj);
+                    edit = true;
+                }
             }
+            else
+            {
+                if (_useFoldout && GUILayout.Button("set null", GUILayout.Width(100f)))
+                {
+                    setter(null);
+                    obj = null;
+                    edit = true;
+                }
+            }
+
+            if (obj == null)
+                return edit;
 
             var props = MessagePackTypeCache.Instance.GetProperties(concreteType);
             foreach (var prop in props)
