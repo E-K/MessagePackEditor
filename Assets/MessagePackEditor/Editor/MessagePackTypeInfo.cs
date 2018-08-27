@@ -25,7 +25,9 @@ namespace MessagePackEditor
                 .Where(asm => !asm.FullName.StartsWith("Unity"))
                 .Where(asm => !asm.FullName.StartsWith("SyntaxTree"))
                 .Where(asm => !asm.FullName.StartsWith("Mono.Security,"))
-                //.Where(asm => !asm.IsDynamic)
+#if NET_4_6
+                .Where(asm => !asm.IsDynamic)
+#endif
                 .SelectMany(asm => asm.GetExportedTypes())
                 .ToArray();
 

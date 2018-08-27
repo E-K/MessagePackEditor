@@ -24,6 +24,19 @@ namespace MessagePackEditor
             Register(DoubleMessagePackPropertyDrawer.Default);
             Register(StringMessagePackPropertyDrawer.Default);
             Register(EnumMessagePackPropertyDrawer.Default);
+
+            //nullable
+            Register(NullableByteMessagePackPropertyDrawer.Default);
+            Register(NullableSByteMessagePackPropertyDrawer.Default);
+            Register(NullableBooleanMessagePackPropertyDrawer.Default);
+            Register(NullableInt16MessagePackPropertyDrawer.Default);
+            Register(NullableInt32MessagePackPropertyDrawer.Default);
+            Register(NullableInt64MessagePackPropertyDrawer.Default);
+            Register(NullableUInt16MessagePackPropertyDrawer.Default);
+            Register(NullableUInt32MessagePackPropertyDrawer.Default);
+            Register(NullableUInt64MessagePackPropertyDrawer.Default);
+            Register(NullableSingleMessagePackPropertyDrawer.Default);
+            Register(NullableDoubleMessagePackPropertyDrawer.Default);
         }
 
         private static void Register(IMessagePackPropertyDrawer drawer)
@@ -363,6 +376,358 @@ namespace MessagePackEditor
             {
                 setter(selected);
                 return true;
+            }
+            return false;
+        }
+    }
+
+    public class NullableByteMessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableByteMessagePackPropertyDrawer Default = new NullableByteMessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(byte?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (byte?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if(string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                byte tmp;
+                if (Byte.TryParse(newStr, out tmp))
+                {
+                    setter((byte?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableSByteMessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableSByteMessagePackPropertyDrawer Default = new NullableSByteMessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(sbyte?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (sbyte?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                sbyte tmp;
+                if (SByte.TryParse(newStr, out tmp))
+                {
+                    setter((sbyte?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableBooleanMessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableBooleanMessagePackPropertyDrawer Default = new NullableBooleanMessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(bool?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (bool?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                bool tmp;
+                if (Boolean.TryParse(newStr, out tmp))
+                {
+                    setter((bool?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableInt16MessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableInt16MessagePackPropertyDrawer Default = new NullableInt16MessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(short?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (short?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                short tmp;
+                if (Int16.TryParse(newStr, out tmp))
+                {
+                    setter((short?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableInt32MessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableInt32MessagePackPropertyDrawer Default = new NullableInt32MessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(int?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (int?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                int tmp;
+                if (Int32.TryParse(newStr, out tmp))
+                {
+                    setter((int?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableInt64MessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableInt64MessagePackPropertyDrawer Default = new NullableInt64MessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(long?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (long?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                long tmp;
+                if (Int64.TryParse(newStr, out tmp))
+                {
+                    setter((long?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableUInt16MessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableUInt16MessagePackPropertyDrawer Default = new NullableUInt16MessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(ushort?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (ushort?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                ushort tmp;
+                if (UInt16.TryParse(newStr, out tmp))
+                {
+                    setter((ushort?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableUInt32MessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableUInt32MessagePackPropertyDrawer Default = new NullableUInt32MessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(uint?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (uint?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                uint tmp;
+                if (UInt32.TryParse(newStr, out tmp))
+                {
+                    setter((uint?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableUInt64MessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableUInt64MessagePackPropertyDrawer Default = new NullableUInt64MessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(ulong?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (ulong?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                ulong tmp;
+                if (UInt64.TryParse(newStr, out tmp))
+                {
+                    setter((ulong?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableSingleMessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableSingleMessagePackPropertyDrawer Default = new NullableSingleMessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(float?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (float?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                float tmp;
+                if (Single.TryParse(newStr, out tmp))
+                {
+                    setter((float?)tmp);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class NullableDoubleMessagePackPropertyDrawer : IMessagePackPropertyDrawer
+    {
+        public static readonly NullableDoubleMessagePackPropertyDrawer Default = new NullableDoubleMessagePackPropertyDrawer();
+
+        public Type TargetType
+        {
+            get { return typeof(double?); }
+        }
+
+        public bool DrawField(string label, Func<object> getter, Action<object> setter, Type type)
+        {
+            var value = (double?)getter();
+            var valuteStr = value.ToString();
+            var newStr = EditorGUILayout.TextField(label, valuteStr);
+            if (valuteStr != newStr)
+            {
+                if (string.IsNullOrEmpty(newStr))
+                {
+                    setter(null);
+                    return true;
+                }
+                double tmp;
+                if (Double.TryParse(newStr, out tmp))
+                {
+                    setter((double?)tmp);
+                    return true;
+                }
             }
             return false;
         }
